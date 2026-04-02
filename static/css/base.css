@@ -1,0 +1,439 @@
+:root {
+    --font-sans: "Be Vietnam Pro", "Segoe UI", Tahoma, Arial, sans-serif;
+    --hust-red: #a51c30;
+    --hust-red-deep: #861526;
+    --hust-ink: #1f2937;
+    --hust-muted: #667085;
+    --hust-border: #d7dee8;
+    --hust-border-strong: #c6ceda;
+    --hust-bg-soft: #f3f5f8;
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 10px;
+    --radius-xl: 12px;
+    --shadow-soft: 0 1px 2px rgba(16, 24, 40, 0.04);
+    --shadow-card: 0 1px 3px rgba(16, 24, 40, 0.08);
+    --shadow-strong: 0 8px 24px rgba(16, 24, 40, 0.08);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    background-color: #f4f6f9;
+    color: #222;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+a {
+    text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+::selection {
+    background: rgba(198, 29, 58, 0.18);
+}
+
+.form-control,
+.form-select {
+    min-height: 42px;
+    padding: 0.68rem 0.85rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--hust-border);
+    background: #fff;
+    box-shadow: none;
+}
+
+.form-control::placeholder,
+.form-select::placeholder {
+    color: #9aa4b2;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: rgba(198, 29, 58, 0.45);
+    box-shadow: 0 0 0 3px rgba(165, 28, 48, 0.1);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--hust-ink);
+}
+
+.btn {
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    padding: 0.72rem 1.05rem;
+}
+
+.alert {
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    padding: 0.85rem 0.95rem;
+}
+
+.btn-hust {
+    background: var(--hust-red);
+    border-color: var(--hust-red);
+    color: #fff;
+    box-shadow: none;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-hust:hover {
+    background: var(--hust-red-deep);
+    border-color: var(--hust-red-deep);
+    color: #fff;
+}
+
+.login-page {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 28px 18px;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at left bottom, rgba(18, 212, 224, 0.62), transparent 28%),
+        linear-gradient(112deg, #40ade5 0%, #5891e0 31%, #9360ea 63%, #e610d8 100%);
+}
+
+.login-page,
+.login-page * {
+    font-family: var(--font-sans);
+}
+
+.login-page::before {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-radius: 10px;
+    border: 1px solid rgba(20, 26, 40, 0.14);
+    pointer-events: none;
+}
+
+.login-bg-shape {
+    position: absolute;
+    width: 380px;
+    height: 380px;
+    border-radius: 42px;
+    background: rgba(255, 255, 255, 0.11);
+    transform: rotate(32deg);
+    pointer-events: none;
+}
+
+.login-bg-shape-left {
+    top: -170px;
+    left: -170px;
+}
+
+.login-bg-shape-right {
+    top: 26px;
+    right: -150px;
+}
+
+.login-bg-shape-bottom {
+    bottom: -245px;
+    left: 26%;
+}
+
+.login-box {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 515px);
+    padding: 34px 24px 24px;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 22px 48px rgba(66, 54, 122, 0.18);
+}
+
+.login-title {
+    margin: 0;
+    color: #000;
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+.login-rule {
+    height: 1px;
+    margin: 10px 0 24px;
+    background: #d3d3d3;
+}
+
+.login-rule-dashed {
+    height: 0;
+    margin: 18px 0 18px;
+    border-top: 1px dashed #d8d8d8;
+    background: none;
+}
+
+.login-office365 {
+    text-align: center;
+}
+
+.login-office365-note {
+    margin: 0 0 10px;
+    color: #5d6584;
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 600;
+}
+
+.login-office365-button {
+    width: min(100%, 334px);
+    min-height: 47px;
+    margin: 0 auto;
+    border: 0;
+    border-radius: 999px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    background: #e92a26;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: not-allowed;
+}
+
+.login-office365-icon {
+    width: 23px;
+    height: 23px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-office365-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.login-alt-method {
+    text-align: center;
+    color: #626b84;
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.login-alt-method strong {
+    display: block;
+    color: #ef2834;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.login-box .alert {
+    margin: 16px 0 14px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.login-box .alert-danger {
+    background: #fff3f4;
+    color: #b2142e;
+    border-color: #ffd7dc;
+}
+
+.login-box .alert-success {
+    background: #edfdf3;
+    color: #087443;
+    border-color: #ccefdc;
+}
+
+.login-form {
+    margin-top: 8px;
+}
+
+.login-field + .login-field {
+    margin-top: 12px;
+}
+
+.login-field .form-label {
+    display: inline-block;
+    margin-bottom: 6px;
+    color: #000;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.login-field .form-label span {
+    color: #ef2834;
+}
+
+.login-input.form-control {
+    min-height: 44px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #d7dce5;
+    background: #fff;
+    box-shadow: none;
+    color: #000;
+    font-size: 14px;
+}
+
+.login-input.form-control::placeholder {
+    color: #b1b6c4;
+}
+
+.login-input.form-control:focus {
+    border-color: #c8cfdb;
+    box-shadow: 0 0 0 3px rgba(168, 177, 194, 0.14);
+}
+
+.login-forgot-row {
+    display: flex;
+    justify-content: flex-end;
+    margin: 12px 0 18px;
+}
+
+.login-forgot-button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #5d6584;
+    font-size: 14px;
+    font-style: italic;
+}
+
+.login-submit {
+    width: 100%;
+    min-height: 47px;
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #f1f3f6 0%, #e5e9ef 100%);
+    color: #b6bcc6;
+    font-size: 18px;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(148, 163, 184, 0.14);
+}
+
+.login-submit:disabled {
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+.login-submit:not(:disabled) {
+    background: #e92a26;
+    color: #fff;
+    cursor: pointer;
+}
+
+.login-submit:not(:disabled):hover {
+    background: #db1f1b;
+    color: #fff;
+}
+
+.login-sample-accounts {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid #e7e7e7;
+}
+
+.login-sample-accounts summary {
+    cursor: pointer;
+    list-style: none;
+    color: #505a73;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.login-sample-accounts summary::-webkit-details-marker {
+    display: none;
+}
+
+.login-sample-accounts summary::after {
+    content: "+";
+    float: right;
+    color: #8d95aa;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.login-sample-accounts[open] summary::after {
+    content: "-";
+}
+
+.login-sample-table {
+    margin-top: 12px;
+    display: grid;
+    gap: 10px;
+}
+
+.login-sample-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid #e2e6ee;
+    border-radius: 10px;
+    background: #fafbfd;
+}
+
+.login-sample-role {
+    display: grid;
+    gap: 3px;
+}
+
+.login-sample-role strong {
+    color: #1c2434;
+    font-size: 14px;
+}
+
+.login-sample-role span {
+    color: #677086;
+    font-size: 13px;
+}
+
+.login-sample-fill {
+    flex: 0 0 auto;
+    min-width: 92px;
+    padding: 9px 12px;
+    border: 0;
+    border-radius: 999px;
+    background: #e92a26;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.login-sample-fill:hover {
+    background: #d81d19;
+}
+
+@media (max-width: 576px) {
+    .login-page {
+        padding: 12px;
+    }
+
+    .login-bg-shape {
+        width: 260px;
+        height: 260px;
+    }
+
+    .login-box {
+        width: calc(100vw - 24px);
+        padding: 26px 18px 20px;
+    }
+
+    .login-office365-button {
+        width: 100%;
+    }
+
+    .login-sample-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

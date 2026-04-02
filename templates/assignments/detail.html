@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Chi tiết bài tập{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+    {% include "includes/app_sidebar.html" %}
+
+    <main class="main-content">
+        {% include "includes/app_topbar.html" %}
+        {% include "includes/flashes.html" %}
+
+        <section class="page-actions">
+            <div class="inline-actions">
+                <a href="{{ url_for('assignments.index') }}" class="page-action-link">Quay lại danh sách bài tập</a>
+                <a href="{{ url_for('assignments.export_assignment_scores', assignment_id=assignment_item.id) }}" class="page-action-link">
+                    Xuất Excel bảng điểm
+                </a>
+                <form method="post" action="{{ url_for('assignments.delete_assignment', assignment_id=assignment_item.id) }}" class="inline-form">
+                    <button type="submit" class="page-action-link action-danger" onclick="return confirm('Bạn chắc chắn muốn xóa bài tập này?');">
+                        Xóa bài tập
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section class="stats-grid">
+            <article class="stat-card">
+                <span class="stat-label">Đã nộp</span>
+                <h3>{{ stats.submitted_count }}</h3>
+                <p>Số bài nộp đúng hạn.</p>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">Nộp muộn</span>
+                <h3>{{ stats.late_count }}</h3>
+                <p>Số bài nộp sau hạn.</p>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">Thiếu bài</span>
+                <h3>{{ stats.missing_count }}</h3>
+                <p>Số sinh viên chưa nộp bài.</p>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">Điểm TB</span>
+                <h3>
+                    {% if stats.average_score is not none %}
+                        {{ "%.2f"|format(stats.average_score) }}
+                    {% else %}
+                        --
+                    {% endif %}
+                </h3>
+                <p>Trung bình điểm đã chấm.</p>
+            </article>
+        </section>
+
+        <section class="content-card">
+            <div class="section-head">
+                <div>
+                    <h2 class="section-title">{{ assignment_item.title }}</h2>
+                    <p class="section-subtitle">
+                        Lớp {{ assignment_item.class_code }} - {{ assignment_item.class_name }} | Hạn nộp {{ assignment_item.due_date }}
+                    </p>
+                </div>
+            </div>
+
+            <p>{{ assignment_item.description or "Không có mô tả bài tập." }}</p>
+        </section>
+
+        <section class="content-card">
+            <div class="section-head">
+                <div>
+                    <h2 class="section-title">Chấm điểm theo sinh viên</h2>
+                    <p class="section-subtitle">Cập nhật trạng thái, điểm và nhận xét ngay trong bảng.</p>
+                </div>
+            </div>
+
+            {% if submission_items %}
+                <div class="table-toolbar">
+                    <input
+                        type="text"
+                        class="form-control table-search"
+                        placeholder="Tìm mã SV, họ tên..."
+                        data-table-filter
+                        data-table-filter-target="#submissions-table"
+                    >
+                </div>
+                <div class="data-table-wrap">
+                    <table class="data-table" id="submissions-table">
+                        <thead>
+                            <tr>
+                                <th>Sinh viên</th>
+                                <th>Liên hệ</th>
+                                <th>Trạng thái</th>
+                                <th>Điểm</th>
+                                <th>Nhận xét</th>
+                                <th>Cập nhật</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in submission_items %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ item.full_name }}</strong>
+                                        <div class="table-note">{{ item.student_code }}</div>
+                                    </td>
+                                    <td>{{ item.email or "Chưa cập nhật email" }}</td>
+                                    <td>
+                                        {% set status = item.status or "missing" %}
+                                        <span class="status-badge status-{{ status }}">
+                                            {% if status == "submitted" %}
+                                                Đã nộp
+                                            {% elif status == "late" %}
+                                                Nộp muộn
+                                            {% else %}
+                                                Chưa nộp
+                                            {% endif %}
+                                        </span>
+                                        <div class="table-note">
+                                            {% if item.submitted_at %}
+                                                {{ item.submitted_at }}
+                                            {% else %}
+                                                Chưa có thời gian nộp
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>{{ item.teacher_score if item.teacher_score is not none else "--" }}</td>
+                                    <td>{{ item.teacher_comment or "-" }}</td>
+                                    <td>
+                                        <form method="post" action="{{ url_for('assignments.grade_student_submission', assignment_id=assignment_item.id, student_id=item.student_id) }}" class="inline-form form-compact">
+                                            <select name="status" class="form-select form-select-sm">
+                                                <option value="submitted" {% if (item.status or "missing") == "submitted" %}selected{% endif %}>Đã nộp</option>
+                                                <option value="late" {% if item.status == "late" %}selected{% endif %}>Nộp muộn</option>
+                                                <option value="missing" {% if (item.status or "missing") == "missing" %}selected{% endif %}>Chưa nộp</option>
+                                            </select>
+                                            <input
+                                                name="teacher_score"
+                                                class="form-control form-control-sm"
+                                                placeholder="0 - 10"
+                                                value="{{ item.teacher_score if item.teacher_score is not none else '' }}"
+                                            >
+                                            <input
+                                                name="teacher_comment"
+                                                class="form-control form-control-sm"
+                                                placeholder="Nhận xét"
+                                                value="{{ item.teacher_comment or '' }}"
+                                            >
+                                            <button type="submit" class="inline-action-link">Lưu</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>Chưa có sinh viên trong lớp</h3>
+                    <p>Hãy thêm sinh viên vào lớp để chấm điểm bài tập.</p>
+                </div>
+            {% endif %}
+        </section>
+    </main>
+</div>
+{% endblock %}

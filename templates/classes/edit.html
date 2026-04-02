@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Sửa lớp học{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+    {% include "includes/app_sidebar.html" %}
+
+    <main class="main-content">
+        {% include "includes/app_topbar.html" %}
+        {% include "includes/flashes.html" %}
+
+        <section class="page-actions">
+            <a href="{{ url_for('classes.detail', class_id=class_item.id) }}" class="page-action-link">Quay lại chi tiết lớp</a>
+        </section>
+
+        <section class="content-card">
+            <div class="section-head">
+                <div>
+                    <h2 class="section-title">Cập nhật thông tin lớp</h2>
+                    <p class="section-subtitle">Chỉnh sửa thông tin phục vụ quản lý lớp học phần.</p>
+                </div>
+            </div>
+
+            <form method="post" class="form-grid form-grid-2">
+                <div class="form-field">
+                    <label class="form-label" for="class_code">Mã lớp</label>
+                    <input id="class_code" name="class_code" class="form-control" value="{{ class_item.class_code }}" required>
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="class_name">Tên lớp</label>
+                    <input id="class_name" name="class_name" class="form-control" value="{{ class_item.class_name }}" required>
+                </div>
+                <div class="form-field form-field-span-2">
+                    <label class="form-label" for="subject_name">Môn học</label>
+                    <input id="subject_name" name="subject_name" class="form-control" value="{{ class_item.subject_name }}" required>
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="semester">Học kỳ</label>
+                    <input id="semester" name="semester" class="form-control" value="{{ class_item.semester or '' }}">
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="school_year">Năm học</label>
+                    <input id="school_year" name="school_year" class="form-control" value="{{ class_item.school_year or '' }}">
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="room">Phòng học</label>
+                    <input id="room" name="room" class="form-control" value="{{ class_item.room or '' }}">
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="schedule_info">Lịch học</label>
+                    <input id="schedule_info" name="schedule_info" class="form-control" value="{{ class_item.schedule_info or '' }}">
+                </div>
+                <div class="form-actions form-actions-span-2">
+                    <button type="submit" class="btn btn-hust">Lưu thay đổi</button>
+                </div>
+            </form>
+        </section>
+    </main>
+</div>
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Chi tiết điểm danh{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+    {% include "includes/app_sidebar.html" %}
+
+    <main class="main-content">
+        {% include "includes/app_topbar.html" %}
+        {% include "includes/flashes.html" %}
+
+        <section class="page-actions">
+            <div class="inline-actions">
+                <a href="{{ url_for('attendance.index') }}" class="page-action-link">Quay lại danh sách buổi học</a>
+                <a href="{{ url_for('attendance.export_session_attendance', session_id=session_item.id) }}" class="page-action-link">
+                    Xuất Excel điểm danh
+                </a>
+                <form method="post" action="{{ url_for('attendance.change_session_status', session_id=session_item.id) }}" class="inline-form">
+                    {% if session_item.status == "open" %}
+                        <input type="hidden" name="status" value="closed">
+                        <button type="submit" class="page-action-link">Đóng buổi học</button>
+                    {% else %}
+                        <input type="hidden" name="status" value="open">
+                        <button type="submit" class="page-action-link">Mở lại buổi học</button>
+                    {% endif %}
+                </form>
+                <form method="post" action="{{ url_for('attendance.delete_session', session_id=session_item.id) }}" class="inline-form">
+                    <button type="submit" class="page-action-link action-danger" onclick="return confirm('Bạn chắc chắn muốn xóa buổi học này?');">
+                        Xóa buổi học
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section class="stats-grid">
+            <article class="stat-card">
+                <span class="stat-label">Có mặt</span>
+                <h3>{{ stats.present_count }}</h3>
+                <p>Số sinh viên được ghi nhận có mặt.</p>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">Đi muộn</span>
+                <h3>{{ stats.late_count }}</h3>
+                <p>Số sinh viên đến muộn.</p>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">Vắng mặt</span>
+                <h3>{{ stats.absent_count }}</h3>
+                <p>Số sinh viên vắng trong buổi này.</p>
+            </article>
+        </section>
+
+        <section class="content-card">
+            <div class="section-head">
+                <div>
+                    <h2 class="section-title">{{ session_item.session_title or ("Buổi #" ~ session_item.id) }}</h2>
+                    <p class="section-subtitle">
+                        {{ session_item.session_date }} | {{ session_item.start_time }} - {{ session_item.end_time }} |
+                        <strong>{% if session_item.status == "open" %}Đang mở{% else %}Đã đóng{% endif %}</strong>
+                    </p>
+                </div>
+            </div>
+
+            {% if attendance_items %}
+                <div class="table-toolbar">
+                    <input
+                        type="text"
+                        class="form-control table-search"
+                        placeholder="Tìm mã SV, họ tên..."
+                        data-table-filter
+                        data-table-filter-target="#attendance-students-table"
+                    >
+                </div>
+                <div class="data-table-wrap">
+                    <table class="data-table" id="attendance-students-table">
+                        <thead>
+                            <tr>
+                                <th>Sinh viên</th>
+                                <th>Liên hệ</th>
+                                <th>Trạng thái</th>
+                                <th>Ghi chú</th>
+                                <th>Cập nhật</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in attendance_items %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ item.full_name }}</strong>
+                                        <div class="table-note">{{ item.student_code }}</div>
+                                    </td>
+                                    <td>{{ item.email or "Chưa cập nhật email" }}</td>
+                                    <td>
+                                        {% if item.attendance_status %}
+                                            <span class="status-badge status-{{ item.attendance_status }}">
+                                                {% if item.attendance_status == "present" %}
+                                                    Có mặt
+                                                {% elif item.attendance_status == "late" %}
+                                                    Đi muộn
+                                                {% else %}
+                                                    Vắng
+                                                {% endif %}
+                                            </span>
+                                        {% else %}
+                                            <span class="status-badge status-unrecorded">Chưa ghi nhận</span>
+                                        {% endif %}
+                                        <div class="table-note">
+                                            {% if item.checkin_time %}
+                                                Check-in: {{ item.checkin_time }}
+                                            {% else %}
+                                                Chưa có check-in
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>{{ item.note or "-" }}</td>
+                                    <td>
+                                        <form method="post" action="{{ url_for('attendance.update_student_attendance', session_id=session_item.id, student_id=item.student_id) }}" class="inline-form form-compact">
+                                            <select name="attendance_status" class="form-select form-select-sm" {% if session_item.status != "open" %}disabled{% endif %}>
+                                                <option value="present" {% if item.attendance_status == "present" %}selected{% endif %}>Có mặt</option>
+                                                <option value="late" {% if item.attendance_status == "late" %}selected{% endif %}>Muộn</option>
+                                                <option value="absent" {% if item.attendance_status == "absent" or not item.attendance_status %}selected{% endif %}>Vắng</option>
+                                            </select>
+                                            <input name="note" class="form-control form-control-sm" value="{{ item.note or '' }}" placeholder="Ghi chú" {% if session_item.status != "open" %}disabled{% endif %}>
+                                            <button type="submit" class="inline-action-link" {% if session_item.status != "open" %}disabled{% endif %}>
+                                                Lưu
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>Chưa có sinh viên trong lớp</h3>
+                    <p>Thêm sinh viên vào lớp trước khi điểm danh.</p>
+                </div>
+            {% endif %}
+        </section>
+    </main>
+</div>
+{% endblock %}

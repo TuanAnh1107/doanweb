@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Bài tập{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+    {% include "includes/app_sidebar.html" %}
+
+    <main class="main-content">
+        {% include "includes/app_topbar.html" %}
+        {% include "includes/flashes.html" %}
+
+        <section class="stats-grid">
+            <article class="stat-card">
+                <span class="stat-label">Tổng bài tập</span>
+                <h3>{{ stats.total_assignments }}</h3>
+                <p>Số bài tập đã giao cho các lớp.</p>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">Chờ chấm</span>
+                <h3>{{ stats.pending_grading }}</h3>
+                <p>Bài nộp đã gửi nhưng chưa có điểm.</p>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">Thiếu bài</span>
+                <h3>{{ stats.missing_submissions }}</h3>
+                <p>Số lượt nộp đang có trạng thái thiếu.</p>
+            </article>
+        </section>
+
+        <section class="content-card">
+            <div class="section-head">
+                <div>
+                    <h2 class="section-title">Tạo bài tập mới</h2>
+                    <p class="section-subtitle">Tạo bài mới, hệ thống tự gán trạng thái cho cả lớp.</p>
+                </div>
+            </div>
+
+            <form method="post" class="form-grid form-grid-4">
+                <input type="hidden" name="action" value="create_assignment">
+                <div class="form-field">
+                    <label class="form-label" for="class_id">Lớp học</label>
+                    <select id="class_id" name="class_id" class="form-select" required>
+                        <option value="">Chọn lớp học</option>
+                        {% for item in class_items %}
+                            <option value="{{ item.id }}">{{ item.class_code }} - {{ item.class_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-field form-field-span-2">
+                    <label class="form-label" for="title">Tiêu đề bài tập</label>
+                    <input id="title" name="title" class="form-control" required>
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="due_date">Hạn nộp</label>
+                    <input id="due_date" name="due_date" type="datetime-local" class="form-control" required>
+                </div>
+                <div class="form-field form-field-span-4">
+                    <label class="form-label" for="description">Mô tả</label>
+                    <textarea id="description" name="description" class="form-control" rows="3" placeholder="Nội dung yêu cầu bài tập"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-hust">Tạo bài tập</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="content-card">
+            <div class="section-head">
+                <div>
+                    <h2 class="section-title">Danh sách bài tập</h2>
+                    <p class="section-subtitle">Theo dõi hạn nộp, số bài đã nộp và bài chờ chấm.</p>
+                </div>
+            </div>
+
+            {% if assignment_items %}
+                <div class="table-toolbar">
+                    <input
+                        type="text"
+                        class="form-control table-search"
+                        placeholder="Tìm bài tập, lớp học..."
+                        data-table-filter
+                        data-table-filter-target="#assignments-table"
+                    >
+                </div>
+                <div class="data-table-wrap">
+                    <table class="data-table" id="assignments-table">
+                        <thead>
+                            <tr>
+                                <th>Bài tập</th>
+                                <th>Lớp</th>
+                                <th>Hạn nộp</th>
+                                <th>Đã nộp</th>
+                                <th>Nộp muộn</th>
+                                <th>Thiếu</th>
+                                <th>Chờ chấm</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in assignment_items %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ item.title }}</strong>
+                                        <div class="table-note">{{ item.description or "Không có mô tả." }}</div>
+                                    </td>
+                                    <td>{{ item.class_code }} - {{ item.class_name }}</td>
+                                    <td>{{ item.due_date }}</td>
+                                    <td>{{ item.submitted_count }}</td>
+                                    <td>{{ item.late_count }}</td>
+                                    <td>{{ item.missing_count }}</td>
+                                    <td>{{ item.pending_count }}</td>
+                                    <td>
+                                        <a href="{{ url_for('assignments.detail', assignment_id=item.id) }}" class="inline-action-link">
+                                            Chi tiết
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>Chưa có bài tập</h3>
+                    <p>Tạo bài tập đầu tiên để bắt đầu.</p>
+                </div>
+            {% endif %}
+        </section>
+    </main>
+</div>
+{% endblock %}

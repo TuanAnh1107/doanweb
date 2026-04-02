@@ -1,0 +1,28 @@
+<div class="topbar">
+    <div class="hust-banner">
+        <div class="hust-brand">
+            <img
+                src="{{ url_for('static', filename='images/hust-logo.webp') }}"
+                alt="Logo HUST"
+                class="hust-logo"
+            >
+            <div class="hust-brand-text">
+                <span class="hust-university">ĐẠI HỌC BÁCH KHOA HÀ NỘI</span>
+                <span class="hust-system">HỆ THỐNG QUẢN LÝ LỚP HỌC THÔNG MINH</span>
+            </div>
+        </div>
+
+        <div class="user-box">
+            <span class="user-role-label">
+                {% if session.get("user_role") == "student" %}Sinh viên{% else %}Giảng viên{% endif %}
+            </span>
+            <span class="user-box-name">{{ user_name or teacher_name or student_name }}</span>
+        </div>
+    </div>
+
+    <div class="topbar-copy">
+        <p class="page-kicker">Đồ án môn Thiết kế và lập trình web</p>
+        <h1 class="page-title">{{ page_title }}</h1>
+        <p class="page-subtitle">{{ page_subtitle }}</p>
+    </div>
+</div>

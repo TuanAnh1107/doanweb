@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Điểm danh{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+    {% include "includes/app_sidebar.html" %}
+
+    <main class="main-content">
+        {% include "includes/app_topbar.html" %}
+        {% include "includes/flashes.html" %}
+
+        <section class="stats-grid">
+            <article class="stat-card">
+                <span class="stat-label">Tổng buổi học</span>
+                <h3>{{ stats.total_sessions }}</h3>
+                <p>Số phiên điểm danh đã được tạo.</p>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">Đang mở</span>
+                <h3>{{ stats.open_sessions }}</h3>
+                <p>Các phiên hiện còn nhận điểm danh.</p>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">Đã ghi nhận</span>
+                <h3>{{ stats.checked_students }}</h3>
+                <p>Lượt điểm danh có mặt hoặc đi muộn.</p>
+            </article>
+        </section>
+
+        <section class="content-card">
+            <div class="section-head">
+                <div>
+                    <h2 class="section-title">Tạo buổi học mới</h2>
+                    <p class="section-subtitle">Tạo buổi học, hệ thống sẽ tự thêm danh sách sinh viên.</p>
+                </div>
+            </div>
+
+            <form method="post" class="form-grid form-grid-4">
+                <input type="hidden" name="action" value="create_session">
+                <div class="form-field">
+                    <label class="form-label" for="class_id">Lớp học</label>
+                    <select id="class_id" name="class_id" class="form-select" required>
+                        <option value="">Chọn lớp học</option>
+                        {% for item in class_items %}
+                            <option value="{{ item.id }}">{{ item.class_code }} - {{ item.class_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="session_title">Tiêu đề buổi</label>
+                    <input id="session_title" name="session_title" class="form-control" placeholder="VD: Buổi học 2">
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="session_date">Ngày học</label>
+                    <input id="session_date" name="session_date" type="date" class="form-control" required>
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="start_time">Giờ bắt đầu</label>
+                    <input id="start_time" name="start_time" type="time" class="form-control" required>
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="end_time">Giờ kết thúc</label>
+                    <input id="end_time" name="end_time" type="time" class="form-control" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-hust">Tạo buổi học</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="content-card">
+            <div class="section-head">
+                <div>
+                    <h2 class="section-title">Các buổi học gần đây</h2>
+                    <p class="section-subtitle">Xem nhanh số có mặt, đi muộn và vắng.</p>
+                </div>
+            </div>
+
+            {% if session_items %}
+                <div class="table-toolbar">
+                    <input
+                        type="text"
+                        class="form-control table-search"
+                        placeholder="Tìm buổi học, lớp học..."
+                        data-table-filter
+                        data-table-filter-target="#attendance-sessions-table"
+                    >
+                </div>
+                <div class="data-table-wrap">
+                    <table class="data-table" id="attendance-sessions-table">
+                        <thead>
+                            <tr>
+                                <th>Buổi học</th>
+                                <th>Lớp</th>
+                                <th>Thời gian</th>
+                                <th>Trạng thái</th>
+                                <th>Có mặt</th>
+                                <th>Muộn</th>
+                                <th>Vắng</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in session_items %}
+                                <tr>
+                                    <td>{{ item.session_title or ("Buổi #" ~ item.id) }}</td>
+                                    <td>{{ item.class_code }} - {{ item.class_name }}</td>
+                                    <td>{{ item.session_date }}<br>{{ item.start_time }} - {{ item.end_time }}</td>
+                                    <td>
+                                        <span class="status-badge {% if item.status == 'open' %}status-open{% else %}status-closed{% endif %}">
+                                            {% if item.status == "open" %}Đang mở{% else %}Đã đóng{% endif %}
+                                        </span>
+                                    </td>
+                                    <td>{{ item.present_count }}</td>
+                                    <td>{{ item.late_count }}</td>
+                                    <td>{{ item.absent_count }}</td>
+                                    <td>
+                                        <a href="{{ url_for('attendance.detail', session_id=item.id) }}" class="inline-action-link">
+                                            Chi tiết
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>Chưa có dữ liệu điểm danh</h3>
+                    <p>Tạo buổi học đầu tiên để bắt đầu.</p>
+                </div>
+            {% endif %}
+        </section>
+    </main>
+</div>
+{% endblock %}

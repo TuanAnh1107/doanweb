@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82 120" role="img" aria-labelledby="title desc">
+  <title id="title">Logo HUST</title>
+  <desc id="desc">Biểu trưng Bách Khoa Hà Nội cách điệu, nền đỏ và sao vàng.</desc>
+
+  <rect x="1.5" y="1.5" width="79" height="117" fill="#c3132d" stroke="#f7c65d" stroke-width="3"/>
+  <rect x="8" y="8" width="66" height="16" fill="#b70f28"/>
+  <polygon points="41,10 43.8,15.8 50.2,15.8 45.1,19.6 47,25.1 41,21.7 35,25.1 36.9,19.6 31.8,15.8 38.2,15.8" fill="#f7c65d"/>
+
+  <rect x="8" y="24" width="66" height="72" fill="#ffffff"/>
+  <path d="M20 82 L43 36 L50 40 L28 86 Z" fill="#ffd24c"/>
+  <path d="M30 85 L54 46 L60 50 L36 89 Z" fill="#c3132d"/>
+  <path d="M45 36 L51 36 L51 78 L45 86 Z" fill="#e0a825"/>
+  <rect x="25" y="62" width="30" height="4" fill="#c3132d"/>
+
+  <rect x="8" y="96" width="66" height="16" fill="#f7c65d"/>
+  <text x="41" y="108" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700" fill="#c3132d">
+    BÁCH KHOA
+  </text>
+</svg>

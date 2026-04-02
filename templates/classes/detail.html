@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+
+{% block title %}Chi tiết lớp học{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+    {% include "includes/app_sidebar.html" %}
+
+    <main class="main-content">
+        {% include "includes/app_topbar.html" %}
+        {% include "includes/flashes.html" %}
+
+        <section class="page-actions">
+            <div class="inline-actions">
+                <a href="{{ url_for('classes.index') }}" class="page-action-link">Quay lại danh sách lớp</a>
+                <a href="{{ url_for('classes.edit', class_id=class_item.id) }}" class="page-action-link">Sửa thông tin lớp</a>
+                <a href="{{ url_for('classes.export_class_students', class_id=class_item.id) }}" class="page-action-link">
+                    Xuất Excel sinh viên
+                </a>
+                <form method="post" action="{{ url_for('classes.delete', class_id=class_item.id) }}" class="inline-form">
+                    <button type="submit" class="page-action-link action-danger" onclick="return confirm('Bạn chắc chắn muốn xóa lớp này?');">
+                        Xóa lớp
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section class="stats-grid">
+            <article class="stat-card">
+                <span class="stat-label">Sĩ số lớp</span>
+                <h3>{{ stats.total_students }}</h3>
+                <p>Tổng số sinh viên hiện đang trong lớp này.</p>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">Buổi học</span>
+                <h3>{{ stats.total_sessions }}</h3>
+                <p>Số buổi học đã tạo cho lớp.</p>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">Bài tập</span>
+                <h3>{{ stats.total_assignments }}</h3>
+                <p>Số bài tập đã giao trong lớp.</p>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">Cảnh báo vắng</span>
+                <h3>{{ stats.warning_students }}</h3>
+                <p>Sinh viên đã vắng ít nhất một lần.</p>
+            </article>
+        </section>
+
+        <section class="dashboard-panels">
+            <article class="content-card hero-card">
+                <div class="hero-copy">
+                    <p class="eyebrow">{{ class_item.subject_name }}</p>
+                    <h2>{{ class_item.class_name }}</h2>
+                    <p class="hero-text">
+                        Lớp {{ class_item.class_code }} do {{ class_item.teacher_name }} phụ trách trong
+                        {{ class_item.semester or "học kỳ hiện tại" }}.
+                    </p>
+                </div>
+                <div class="hero-meta">
+                    <div class="meta-chip">
+                        <span class="meta-chip-value">{{ class_item.room or "--" }}</span>
+                        <span class="meta-chip-label">Phòng học</span>
+                    </div>
+                    <div class="meta-chip">
+                        <span class="meta-chip-value">{{ class_item.total_students }}</span>
+                        <span class="meta-chip-label">Sinh viên</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="content-card">
+                <h2 class="section-title">Thông tin lớp</h2>
+                <div class="profile-grid">
+                    <div class="profile-item">
+                        <span class="profile-item-label">Mã lớp</span>
+                        <span class="profile-item-value">{{ class_item.class_code }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-item-label">Học kỳ</span>
+                        <span class="profile-item-value">{{ class_item.semester or "Chưa cập nhật" }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-item-label">Năm học</span>
+                        <span class="profile-item-value">{{ class_item.school_year or "Chưa cập nhật" }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-item-label">Giảng viên</span>
+                        <span class="profile-item-value">{{ class_item.teacher_name }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-item-label">Phòng</span>
+                        <span class="profile-item-value">{{ class_item.room or "Chưa cập nhật" }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-item-label">Lịch học</span>
+                        <span class="profile-item-value">{{ class_item.schedule_info or "Chưa cập nhật" }}</span>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section class="dashboard-panels">
+            <article class="content-card">
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-title">Thêm sinh viên có sẵn</h2>
+                        <p class="section-subtitle">Nhập mã SV hoặc email để thêm vào lớp.</p>
+                    </div>
+                </div>
+                <form method="post" action="{{ url_for('classes.add_existing_student', class_id=class_item.id) }}" class="form-grid form-grid-2">
+                    <div class="form-field">
+                        <label class="form-label" for="student_identifier">Mã SV / Email</label>
+                        <input id="student_identifier" name="student_identifier" class="form-control" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-hust">Thêm vào lớp</button>
+                    </div>
+                </form>
+            </article>
+
+            <article class="content-card">
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-title">Tạo nhanh sinh viên</h2>
+                        <p class="section-subtitle">Dùng khi sinh viên chưa có tài khoản trong hệ thống.</p>
+                    </div>
+                </div>
+                <form method="post" action="{{ url_for('classes.create_student_and_add', class_id=class_item.id) }}" class="form-grid form-grid-2">
+                    <div class="form-field">
+                        <label class="form-label" for="student_code">Mã sinh viên</label>
+                        <input id="student_code" name="student_code" class="form-control" required>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="full_name">Họ tên</label>
+                        <input id="full_name" name="full_name" class="form-control" required>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="email">Email</label>
+                        <input id="email" name="email" type="email" class="form-control">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="phone">Số điện thoại</label>
+                        <input id="phone" name="phone" class="form-control">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="class_name">Lớp hành chính</label>
+                        <input id="class_name" name="class_name" class="form-control" placeholder="VD: K68-ED2">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="password">Mật khẩu ban đầu</label>
+                        <input id="password" name="password" class="form-control" placeholder="Mặc định: 1">
+                    </div>
+                    <div class="form-actions form-actions-span-2">
+                        <button type="submit" class="btn btn-hust">Tạo và thêm sinh viên</button>
+                    </div>
+                </form>
+            </article>
+        </section>
+
+        <section class="content-card">
+            <div class="section-head">
+                <div>
+                    <h2 class="section-title">Sinh viên trong lớp</h2>
+                    <p class="section-subtitle">Danh sách sinh viên hiện có trong lớp.</p>
+                </div>
+            </div>
+
+            {% if student_items %}
+                <div class="table-toolbar">
+                    <input
+                        type="text"
+                        class="form-control table-search"
+                        placeholder="Tìm mã SV, họ tên, email..."
+                        data-table-filter
+                        data-table-filter-target="#class-students-table"
+                    >
+                </div>
+                <div class="data-table-wrap">
+                    <table class="data-table" id="class-students-table">
+                        <thead>
+                            <tr>
+                                <th>Mã SV</th>
+                                <th>Họ tên</th>
+                                <th>Liên hệ</th>
+                                <th>Lớp hành chính</th>
+                                <th>Điểm danh</th>
+                                <th>Bài tập</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in student_items %}
+                                <tr>
+                                    <td><span class="table-pill">{{ item.student_code }}</span></td>
+                                    <td>
+                                        <a href="{{ url_for('classes.student_detail', class_id=class_item.id, student_id=item.id) }}" class="table-action-link">
+                                            {{ item.full_name }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <div>{{ item.email or "Chưa cập nhật email" }}</div>
+                                        <div class="table-note">{{ item.phone or "Chưa cập nhật số điện thoại" }}</div>
+                                    </td>
+                                    <td>{{ item.class_name or "Chưa cập nhật" }}</td>
+                                    <td>
+                                        <div>Có mặt: {{ item.present_count }}</div>
+                                        <div class="table-note">Muộn: {{ item.late_count }} | Vắng: {{ item.absent_count }}</div>
+                                    </td>
+                                    <td>
+                                        <div>Đã nộp: {{ item.submitted_count }}</div>
+                                        <div class="table-note">Thiếu bài: {{ item.missing_count }}</div>
+                                    </td>
+                                    <td>
+                                        <div class="inline-actions">
+                                            <a href="{{ url_for('classes.student_detail', class_id=class_item.id, student_id=item.id) }}" class="inline-action-link">
+                                                Chi tiết
+                                            </a>
+                                            <form method="post" action="{{ url_for('classes.remove_student_from_class', class_id=class_item.id, student_id=item.id) }}" class="inline-form">
+                                                <button type="submit" class="inline-action-link action-danger-soft" onclick="return confirm('Xóa sinh viên này khỏi lớp?');">
+                                                    Xóa
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>Chưa có sinh viên trong lớp</h3>
+                    <p>Hãy thêm sinh viên từ ô nhập phía trên để bắt đầu quản lý.</p>
+                </div>
+            {% endif %}
+        </section>
+    </main>
+</div>
+{% endblock %}

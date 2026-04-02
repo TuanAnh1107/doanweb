@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}Bảng điều khiển sinh viên{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+    {% include "includes/app_sidebar.html" %}
+
+    <main class="main-content">
+        {% include "includes/app_topbar.html" %}
+        {% include "includes/flashes.html" %}
+
+        <section class="stats-grid">
+            <article class="stat-card">
+                <span class="stat-label">Lớp đang học</span>
+                <h3>{{ stats.total_classes }}</h3>
+                <p>Số lớp học phần mà bạn đang tham gia.</p>
+            </article>
+
+            <article class="stat-card">
+                <span class="stat-label">Bài sắp đến hạn</span>
+                <h3>{{ stats.pending_assignments }}</h3>
+                <p>Số bài tập cần nộp trong thời gian tới.</p>
+            </article>
+
+            <article class="stat-card">
+                <span class="stat-label">Đi muộn</span>
+                <h3>{{ stats.late_sessions }}</h3>
+                <p>Số buổi bị ghi nhận đến lớp muộn.</p>
+            </article>
+
+            <article class="stat-card">
+                <span class="stat-label">Vắng mặt</span>
+                <h3>{{ stats.absent_sessions }}</h3>
+                <p>Số buổi điểm danh đang ở trạng thái vắng.</p>
+            </article>
+        </section>
+
+        <section class="dashboard-panels">
+            <article class="content-card hero-card">
+                <div class="hero-copy">
+                    <p class="eyebrow">Hồ sơ cá nhân</p>
+                    <h2>{{ student.full_name }}</h2>
+                    <p class="hero-text">
+                        Xem nhanh lịch học, hạn nộp bài và điểm danh của bạn.
+                    </p>
+                </div>
+                <div class="hero-meta">
+                    <div class="meta-chip">
+                        <span class="meta-chip-value">{{ student.student_code }}</span>
+                        <span class="meta-chip-label">Mã sinh viên</span>
+                    </div>
+                    <div class="meta-chip">
+                        <span class="meta-chip-value">{{ stats.pending_assignments }}</span>
+                        <span class="meta-chip-label">Cần nộp</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="content-card">
+                <h2 class="section-title">Thông tin nhanh</h2>
+                <div class="profile-grid">
+                    <div class="profile-item">
+                        <span class="profile-item-label">Email</span>
+                        <span class="profile-item-value">{{ student.email or "Chưa cập nhật" }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-item-label">Số điện thoại</span>
+                        <span class="profile-item-value">{{ student.phone or "Chưa cập nhật" }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-item-label">Lớp hành chính</span>
+                        <span class="profile-item-value">{{ student.class_name or "Chưa cập nhật" }}</span>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section class="content-card">
+            <div class="section-head">
+                <div>
+                    <h2 class="section-title">Lớp học phần của bạn</h2>
+                    <p class="section-subtitle">Danh sách lớp bạn đang học.</p>
+                </div>
+            </div>
+
+            {% if class_items %}
+                <div class="data-table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã lớp</th>
+                                <th>Tên lớp</th>
+                                <th>Môn học</th>
+                                <th>Giảng viên</th>
+                                <th>Phòng</th>
+                                <th>Lịch</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in class_items %}
+                                <tr>
+                                    <td><span class="table-pill">{{ item.class_code }}</span></td>
+                                    <td>{{ item.class_name }}</td>
+                                    <td>{{ item.subject_name }}</td>
+                                    <td>{{ item.teacher_name }}</td>
+                                    <td>{{ item.room or "Chưa cập nhật" }}</td>
+                                    <td>{{ item.schedule_info or "Chưa cập nhật" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>Chưa có lớp học phần</h3>
+                    <p>Khi được thêm vào lớp học, danh sách sẽ xuất hiện tại đây.</p>
+                </div>
+            {% endif %}
+        </section>
+
+        <section class="dashboard-panels">
+            <article class="content-card">
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-title">Bài tập cần theo dõi</h2>
+                        <p class="section-subtitle">Bài tập kèm trạng thái nộp và điểm hiện tại.</p>
+                    </div>
+                </div>
+
+                {% if assignment_items %}
+                    <div class="stack-list">
+                        {% for item in assignment_items %}
+                            <article class="stack-item">
+                                <div class="stack-item-title">
+                                    <div>
+                                        <strong>{{ item.title }}</strong>
+                                        <p>{{ item.class_name }} | Hạn nộp {{ item.due_date }}</p>
+                                    </div>
+                                    <span class="status-badge status-{{ item.submission_status }}">
+                                        {% if item.submission_status == "submitted" %}
+                                            Đã nộp
+                                        {% elif item.submission_status == "late" %}
+                                            Nộp muộn
+                                        {% else %}
+                                            Chưa nộp
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <p>{{ item.description or "Không có mô tả." }}</p>
+                                <p>
+                                    Điểm:
+                                    {% if item.teacher_score is not none %}
+                                        {{ item.teacher_score }}
+                                    {% else %}
+                                        Chưa có
+                                    {% endif %}
+                                </p>
+                            </article>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <h3>Chưa có bài tập</h3>
+                        <p>Khi có bài mới, hệ thống sẽ hiện tại đây.</p>
+                    </div>
+                {% endif %}
+            </article>
+
+            <article class="content-card">
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-title">Điểm danh gần đây</h2>
+                        <p class="section-subtitle">5 buổi gần nhất của bạn.</p>
+                    </div>
+                </div>
+
+                {% if attendance_items %}
+                    <div class="stack-list">
+                        {% for item in attendance_items %}
+                            <article class="stack-item">
+                                <div class="stack-item-title">
+                                    <div>
+                                        <strong>{{ item.session_title or "Buổi học" }}</strong>
+                                        <p>{{ item.class_name }} | {{ item.session_date }} | {{ item.start_time }} - {{ item.end_time }}</p>
+                                    </div>
+                                    <span class="status-badge status-{{ item.attendance_status }}">
+                                        {% if item.attendance_status == "present" %}
+                                            Có mặt
+                                        {% elif item.attendance_status == "late" %}
+                                            Đi muộn
+                                        {% else %}
+                                            Vắng mặt
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <p>{{ item.note or "Không có ghi chú." }}</p>
+                            </article>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <h3>Chưa có dữ liệu điểm danh</h3>
+                        <p>Khi có dữ liệu, hệ thống sẽ hiện tại đây.</p>
+                    </div>
+                {% endif %}
+            </article>
+        </section>
+    </main>
+</div>
+{% endblock %}

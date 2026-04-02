@@ -1,0 +1,23 @@
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <p class="sidebar-brand-kicker">FAMI - HUST</p>
+        <h4>Quản lý lớp học thông minh</h4>
+        {% if session.get("user_role") == "student" %}
+            <p>Xem lịch học, bài tập và điểm danh của bạn.</p>
+        {% else %}
+            <p>Quản lý lớp, sinh viên, điểm danh và bài tập tại một nơi.</p>
+        {% endif %}
+    </div>
+
+    <ul class="sidebar-menu">
+        {% if session.get("user_role") == "student" %}
+            <li><a href="{{ url_for('auth.student_dashboard') }}" class="{% if active_page == 'student_dashboard' %}active{% endif %}">Tổng quan cá nhân</a></li>
+        {% else %}
+            <li><a href="{{ url_for('auth.dashboard') }}" class="{% if active_page == 'dashboard' %}active{% endif %}">Tổng quan</a></li>
+            <li><a href="{{ url_for('classes.index') }}" class="{% if active_page == 'classes' %}active{% endif %}">Lớp học</a></li>
+            <li><a href="{{ url_for('attendance.index') }}" class="{% if active_page == 'attendance' %}active{% endif %}">Điểm danh</a></li>
+            <li><a href="{{ url_for('assignments.index') }}" class="{% if active_page == 'assignments' %}active{% endif %}">Bài tập</a></li>
+        {% endif %}
+        <li><a href="{{ url_for('auth.logout') }}">Đăng xuất</a></li>
+    </ul>
+</aside>
