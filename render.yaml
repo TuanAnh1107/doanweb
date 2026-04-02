@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: doanweb
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: FLASK_DEBUG
+        value: "false"
+      - key: DB_ENGINE
+        value: "sqlite"
+      - key: SQLITE_PATH
+        value: "/tmp/quanlylophoc.db"
