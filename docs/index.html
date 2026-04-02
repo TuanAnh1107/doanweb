@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đồ án Web - Quản lý lớp học thông minh</title>
+  <style>
+    :root {
+      --hust-red: #b3122d;
+      --hust-red-dark: #7f0f22;
+      --text: #1f2937;
+      --muted: #4b5563;
+      --bg: #f5f6f8;
+      --card: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top right, #ffe3ea 0%, var(--bg) 38%, #eef2f7 100%);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .card {
+      width: min(780px, 100%);
+      background: var(--card);
+      border-radius: 14px;
+      box-shadow: 0 18px 40px rgba(17, 24, 39, 0.12);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, var(--hust-red-dark), var(--hust-red));
+      color: #fff;
+      padding: 22px 28px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: clamp(1.4rem, 2.8vw, 1.9rem);
+      line-height: 1.2;
+    }
+    .content {
+      padding: 24px 28px 30px;
+      line-height: 1.6;
+    }
+    .muted {
+      color: var(--muted);
+      margin-top: 6px;
+    }
+    .actions {
+      margin-top: 18px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-block;
+      text-decoration: none;
+      padding: 11px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease;
+    }
+    .btn-primary {
+      color: #fff;
+      background: var(--hust-red);
+      box-shadow: 0 8px 18px rgba(179, 18, 45, 0.24);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      background: #9e1028;
+    }
+    .btn-secondary {
+      color: var(--hust-red-dark);
+      background: #fff;
+      border: 1px solid #e5e7eb;
+    }
+    .note {
+      margin-top: 18px;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+    code {
+      background: #f2f4f8;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <section class="header">
+      <h1>Hệ thống Quản lý lớp học thông minh</h1>
+    </section>
+    <section class="content">
+      <p>Trang này dùng để test nhanh deployment qua GitHub Pages.</p>
+      <p class="muted">Bản đầy đủ (đăng nhập, dashboard, quản lý lớp, điểm danh, bài tập) cần chạy Flask backend.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="https://github.com/TuanAnh1107/doanweb" target="_blank" rel="noreferrer">Mở source code</a>
+        <a class="btn btn-secondary" href="https://github.com/TuanAnh1107/doanweb/blob/main/README.md" target="_blank" rel="noreferrer">Xem hướng dẫn chạy local</a>
+      </div>
+      <p class="note">Lệnh chạy local: <code>python app.py</code></p>
+    </section>
+  </main>
+</body>
+</html>
